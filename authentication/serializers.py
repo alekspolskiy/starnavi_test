@@ -4,6 +4,12 @@ from rest_framework.exceptions import AuthenticationFailed
 from .models import User
 
 
+class UsersListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+
+
 class SignUpSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=100, min_length=4, write_only=True)
 
@@ -12,7 +18,7 @@ class SignUpSerializer(serializers.ModelSerializer):
         fields = ['email', 'username', 'password']
 
     def validate(self, attrs):
-        username = attrs.get('username', '')
+        username = attrs.get('username')
         if not username.isalnum():
             raise serializers.ValidationError()
         return attrs

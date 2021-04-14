@@ -1,9 +1,23 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions, mixins
 from rest_framework.response import Response
-from rest_framework_simplejwt import serializers
 from datetime import datetime
 from .models import User
-from .serializers import SignUpSerializer, LoginSerializer
+from .serializers import SignUpSerializer, LoginSerializer, UsersListSerializer
+from app.utils import update_last_request
+
+
+class UsersListView(
+    generics.GenericAPIView,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+):
+    serializer_class = UsersListSerializer
+    queryset = User.objects.all()
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        update_last_request(request)
+        return self.list(request)
 
 
 class SignUpView(generics.GenericAPIView):

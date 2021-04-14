@@ -1,26 +1,86 @@
-import jwt
-from rest_framework import generics, permissions, mixins
+from rest_framework import generics, permissions, mixins, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .models import Post
-from .serializers import PostSerializer
-from authentication.models import User
+from .serializers import (
+    PostSerializer,
+    PostCreateSerializer,
+    PostLikeSerializer,
+    PostUnlikeSerializer,
+)
+from .utils import update_last_request, get_user, count_likes
 
 
-class PostsListView(generics.GenericAPIView, mixins.ListModelMixin):
+class PostsView(
+    generics.GenericAPIView,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
+    lookup_field = 'id'
+
+    def get(self, request, id=None):
+        update_last_request(request)
+        if id:
+            return self.retrieve(request, id)
+        return self.list(request, id)
+
+
+class PostCreateView(
+    generics.GenericAPIView,
+    mixins.CreateModelMixin,
+):
+    serializer_class = PostCreateSerializer
+    queryset = Post.objects.all()
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        update_last_request(request)
+        return self.create(request)
+
+
+class PostLikeView(APIView):
+    lookup_field = 'id'
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, id=None):
+        update_last_request(request)
+        data = {
+            'user': get_user(request),
+            'post': id
+        }
+        serializer = PostLikeSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PostUnlikeView(APIView):
+    lookup_field = 'id'
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, id=None):
+        update_last_request(request)
+        data = {
+            'user': get_user(request),
+            'post': id
+        }
+        serializer = PostUnlikeSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AnalyticsView(APIView):
     def get(self, request):
-        user_id = jwt.decode(
-            request.headers.get('Authorization').split(' ')[-1],
-            options={"verify_signature": False}
-        ).get('user_id')
-        user = User.objects.filter(id=user_id).first()
-        user.update_last_request()
-        return self.list(request)
-
-
-class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = PostSerializer
-    queryset = Post.objects.all()
-    permission_classes = (permissions.IsAuthenticated,)
+        update_last_request(request)
+        return Response(count_likes(
+            request.query_params['date_from'],
+            request.query_params['date_to']
+        ))
