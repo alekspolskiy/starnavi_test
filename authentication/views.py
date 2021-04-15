@@ -6,7 +6,7 @@ from .serializers import SignUpSerializer, LoginSerializer, UsersListSerializer
 from app.utils import update_last_request
 
 
-class UsersListView(
+class UsersView(
     generics.GenericAPIView,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
@@ -14,9 +14,12 @@ class UsersListView(
     serializer_class = UsersListSerializer
     queryset = User.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
+    lookup_field = 'id'
 
-    def get(self, request):
+    def get(self, request, id=None):
         update_last_request(request)
+        if id:
+            return self.retrieve(request, id)
         return self.list(request)
 
 
