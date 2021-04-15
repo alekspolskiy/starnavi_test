@@ -26,9 +26,9 @@ python manage.py runserver
 ```
 ## API
 First you need is signup.
-###Signup
+### Signup
 POST: /api/v1/signup/
-####Request Example:
+#### Request Example:
 ```
 curl -v -X POST \
 -d '{
@@ -38,7 +38,7 @@ curl -v -X POST \
     }
 }' "localhost:8000/api/v1/signup/"
 ```
-####Response Example:
+#### Response Example:
 ```
 {
     "email": "example@gmail.com",
@@ -46,9 +46,9 @@ curl -v -X POST \
 }
 ```
 User was successfully created.
-###Login
+### Login
 POST: /api/v1/login/
-####Request Example:
+#### Request Example:
 ```
 curl -v -X POST \
 -d '{
@@ -57,7 +57,7 @@ curl -v -X POST \
     }
 }' "localhost:8000/api/v1/login/"
 ```
-####Response Example:
+#### Response Example:
 ```
 {
     "username": "username",
@@ -68,9 +68,9 @@ curl -v -X POST \
 }
 ```
 Access token has expired time 60 minutes. To refresh token use:
-###Refresh token
+### Refresh token
 POST: /api/v1/token/refresh/
-####Request Example:
+#### Request Example:
 ```
 curl -v -X POST \
 -d '{
@@ -78,16 +78,16 @@ curl -v -X POST \
     }
 }' "localhost:8000/api/v1/token/refresh/"
 ```
-####Response Example:
+#### Response Example:
 ```
 {
     "access": "access_token"
 }
 ```
 Now you can create posts.
-###Post create
+### Post create
 POST: /api/v1/posts/create/
-####Request Example:
+#### Request Example:
 ```
 curl -v -X POST \
 -H "Authorization: Bearer {access_token}" \
@@ -97,7 +97,7 @@ curl -v -X POST \
     }
 }' "localhost:8000/api/v1/posts/create/"
 ```
-####Response Example:
+#### Response Example:
 ```
 {
     "id": 1,
@@ -108,21 +108,22 @@ curl -v -X POST \
     "date": "2021-04-15T04:11:40.539764Z"
 }
 ```
-###Get posts
+### Get posts
 GET: /api/v1/posts/
-####Request Example:
+#### Request Example:
 ```
 curl -v -X GET \
 -H "Authorization: Bearer {access_token}" \
 "localhost:8000/api/v1/posts/"
 ```
-####Response Example:
+#### Response Example:
 ```
 [
     {
         "id": 1,
         "title": "Post1",
         "author": "username",
+        "content": "content",
         "email": "example@gmail.com",
         "date": "2021-04-15T00:08:26.610313Z",
         "like": 0,
@@ -132,6 +133,7 @@ curl -v -X GET \
         "id": 2,
         "title": "Post2",
         "author": "username",
+        "content": "content",
         "email": "example@gmail.com",
         "date": "2021-04-15T04:01:45.339196Z",
         "like": 0,
@@ -139,21 +141,22 @@ curl -v -X GET \
     }
 ]
 ```
-###Get post
+### Get post
 GET: /api/v1/post/{post_id}/
-####Request Example:
+#### Request Example:
 ```
 curl -v -X GET \
 -H "Authorization: Bearer {access_token}" \
 "localhost:8000/api/v1/posts/{post_id}/"
 ```
-####Response Example:
+#### Response Example:
 ```
 [
     {
         "id": 1,
         "title": "Post1",
         "author": "username",
+        "content": "content",
         "email": "example@gmail.com",
         "date": "2021-04-15T00:08:26.610313Z",
         "like": 0,
@@ -161,15 +164,15 @@ curl -v -X GET \
     }
 ]
 ```
-###Post like
+### Post like
 POST: api/v1/posts/{post_id}/like/
-####Request Example:
+#### Request Example:
 ```
 curl -v -X POST \
 -H "Authorization: Bearer {access_token}" \
 }' "localhost:8000/api/v1/posts/{post_id}/like/"
 ```
-####Response Example:
+#### Response Example:
 ```
 {
     "id": 1,
@@ -179,15 +182,15 @@ curl -v -X POST \
 }
 ```
 The same to unlike posts.
-###Post unlike
+### Post unlike
 POST: api/v1/posts/{post_id}/unlike/
-####Request Example:
+#### Request Example:
 ```
 curl -v -X POST \
 -H "Authorization: Bearer {access_token}" \
 }' "localhost:8000/api/v1/posts/{post_id}/unlike/"
 ```
-####Response Example:
+#### Response Example:
 ```
 {
     "id": 1,
@@ -195,15 +198,15 @@ curl -v -X POST \
     "post": 1
 }
 ```
-###Get users
+### Get users
 GET: /api/v1/users/
-####Request Example:
+#### Request Example:
 ```
 curl -v -X GET \
 -H "Authorization: Bearer {access_token}" \
 "localhost:8000/api/v1/users/"
 ```
-####Response Example:
+#### Response Example:
 ```
 [
     {
@@ -242,15 +245,15 @@ curl -v -X GET \
     }
 ]
 ```
-###Get user
-GET: /api/v1/user/{user_id}/
-####Request Example:
+### Get user
+GET: /api/v1/users/{user_id}/
+#### Request Example:
 ```
 curl -v -X GET \
 -H "Authorization: Bearer {access_token}" \
 "localhost:8000/api/v1/users/{user_id}/"
 ```
-####Response Example:
+#### Response Example:
 ```
 [
     {
@@ -272,18 +275,18 @@ curl -v -X GET \
     }
 ]
 ```
-###Get analytics
+### Get analytics
 GET: /api/v1/analytics/
-####Request parameters:
+#### Request parameters:
 date_from - day from which the counting of likes starts (requiered) \
 date_to - day to which the counting ends, include this day (requiered)
-####Request Example:
+#### Request Example:
 ```
 curl -v -X GET \
 -H "Authorization: Bearer {access_token}" \
 "localhost:8000/api/v1/analytics/?date_from=2021-4-11&date_to=2021-4-14"
 ```
-####Response Example:
+#### Response Example:
 ```
 {
     "2021-04-11": 2,
