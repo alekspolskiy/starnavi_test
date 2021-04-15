@@ -10,11 +10,11 @@ def get_user(request):
         request.headers.get('Authorization').split(' ')[-1],
         options={"verify_signature": False}
     ).get('user_id')
-    return user_id
+    return User.objects.filter(id=user_id).first()
 
 
 def update_last_request(request):
-    user = User.objects.filter(id=get_user(request)).first()
+    user = User.objects.filter(id=get_user(request).id).first()
     user.update_last_request()
     return sys.stdout.write('Last request datetime updated')
 

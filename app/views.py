@@ -30,17 +30,23 @@ class PostsView(
         return self.list(request, id)
 
 
-class PostCreateView(
-    generics.GenericAPIView,
-    mixins.CreateModelMixin,
-):
-    serializer_class = PostCreateSerializer
-    queryset = Post.objects.all()
+class PostCreateView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
         update_last_request(request)
-        return self.create(request)
+        user = get_user(request)
+        data = {
+            'title': request.data.get('title'),
+            'content': request.data.get('content'),
+            'author': user.username,
+            'email': user.email
+        }
+        serializer = PostCreateSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PostLikeView(APIView):
@@ -50,7 +56,7 @@ class PostLikeView(APIView):
     def post(self, request, id=None):
         update_last_request(request)
         data = {
-            'user': get_user(request),
+            'user': get_user(request).id,
             'post': id
         }
         serializer = PostLikeSerializer(data=data)
@@ -67,7 +73,7 @@ class PostUnlikeView(APIView):
     def post(self, request, id=None):
         update_last_request(request)
         data = {
-            'user': get_user(request),
+            'user': get_user(request).id,
             'post': id
         }
         serializer = PostUnlikeSerializer(data=data)

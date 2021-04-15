@@ -1,13 +1,13 @@
 from django.db import models
 from django.db.models.signals import post_save
-
 from authentication.models import User
 
 
 class Post(models.Model):
     title = models.CharField(max_length=100)
+    content = models.TextField(max_length=255, default=None)
     author = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100)
+    email = models.EmailField(max_length=100, default=None)
     date = models.DateTimeField(auto_now_add=True)
     like = models.PositiveIntegerField(default=0)
     unlike = models.PositiveIntegerField(default=0)
