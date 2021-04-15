@@ -7,5 +7,5 @@ urlpatterns = [
     path('posts/create/', PostCreateView.as_view()),
     path('posts/<int:id>/like/', PostLikeView.as_view()),
     path('posts/<int:id>/unlike/', PostUnlikeView.as_view()),
-    path('analitics/', AnalyticsView.as_view()),
+    path('analytics/', AnalyticsView.as_view()),
 ]
