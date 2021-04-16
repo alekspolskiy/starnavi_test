@@ -39,8 +39,9 @@ class PostCreateView(APIView):
         data = {
             'title': request.data.get('title'),
             'content': request.data.get('content'),
-            'author': user.username,
-            'email': user.email
+            'author_username': user.username,
+            'email': user.email,
+            'author': user.id
         }
         serializer = PostCreateSerializer(data=data)
         if serializer.is_valid():
